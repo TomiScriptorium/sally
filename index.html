@@ -196,7 +196,11 @@
                 </div>
             </div>
 
-            <div id="responseCard" class="hidden w-full max-w-lg bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-xl animate-scale-up origin-top relative mb-10 md:mb-0">
+            <!-- MODIFICADO: 
+                 - En móvil: 'absolute top-24 left-4 right-4 z-50' -> Flota en el cielo.
+                 - En escritorio: 'md:static md:w-full...' -> Vuelve al flujo normal.
+            -->
+            <div id="responseCard" class="hidden absolute top-24 left-4 right-4 z-50 md:static md:w-full md:max-w-lg bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-2xl animate-scale-up origin-top md:mb-0">
                 <button onclick="resetApp()" class="absolute top-4 right-4 text-slate-300 hover:text-slate-500 transition-colors" title="Cerrar respuesta">
                     <i data-lucide="x" width="18"></i>
                 </button>
