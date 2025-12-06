@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sally.</title>
+    
+    <!-- CONFIGURACIÓN DE ICONOS DINÁMICOS -->
+    <!-- Favicon estándar para navegadores -->
+    <link id="favicon" rel="icon" type="image/png" href="iconosallydia.png">
+    <!-- Icono para Apple (iOS) - Pantalla de inicio y marcadores -->
+    <link id="appleIcon" rel="apple-touch-icon" href="iconosallydia.png">
+    
     <!-- Tailwind CSS para el diseño -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -47,15 +54,9 @@
         input, textarea, button, select, a { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
-<!-- 
-    CAMBIO CLAVE PARA IOS: 
-    1. h-[100dvh]: Fuerza la altura exacta del viewport dinámico.
-    2. overflow-hidden: Evita que el body entero haga scroll (evita el rebote de la página).
-    3. md:min-h-screen y md:h-auto: Restaura comportamiento normal en escritorio.
--->
 <body class="h-[100dvh] w-full bg-[#f8f9fa] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 selection:bg-sky-100 selection:text-sky-900 dark:selection:bg-sky-900 dark:selection:text-sky-100 relative overflow-hidden md:h-auto md:min-h-screen transition-colors duration-300">
 
-    <!-- NOTIFICACIONES FLOTANTES (Fixed relative to body, so they stay put) -->
+    <!-- NOTIFICACIONES FLOTANTES -->
     <div id="levelUpNotification" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
         <div class="bg-gradient-to-r from-yellow-300 to-yellow-500 text-white px-8 py-4 rounded-3xl shadow-xl border-4 border-white dark:border-slate-700 text-2xl font-bold flex items-center gap-3 animate-bounce-custom">
             <i data-lucide="trophy" class="w-8 h-8"></i>
@@ -73,7 +74,7 @@
         </div>
     </div>
 
-    <!-- UI: HEADER / NIVEL (Absolute positioned, stays fixed on top while Main scrolls) -->
+    <!-- UI: HEADER / NIVEL -->
     <div class="absolute top-4 left-4 md:top-10 md:left-10 z-20">
         <div class="flex items-center gap-3 bg-white dark:bg-slate-800 pl-2 pr-6 py-2 rounded-full shadow-sm cursor-pointer hover:shadow-md transition-all border border-slate-100 dark:border-slate-700" onclick="openAchievements()">
             <div class="relative">
@@ -107,12 +108,6 @@
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <!-- 
-        CAMBIO CLAVE PARA IOS: 
-        1. h-full overflow-y-auto: El scroll sucede AQUÍ dentro, no en el body. Esto estabiliza el layout.
-        2. pb-32: Padding extra abajo para que el contenido no quede pegado al borde o tapado.
-        3. md:overflow-visible: En escritorio se comporta normal.
-    -->
     <main class="container mx-auto px-4 h-full w-full overflow-y-auto md:h-auto md:min-h-screen md:overflow-visible flex flex-col md:flex-row items-center justify-start pt-28 pb-32 md:justify-center md:pt-0 md:pb-0 gap-6 md:gap-16 max-w-5xl scroll-smooth">
         
         <!-- LADO IZQUIERDO: AVATAR -->
@@ -309,10 +304,12 @@
         function updateThemeUI(isDark) {
             // 1. Actualizar icono del botón
             const btn = document.getElementById('themeIcon');
-            if (isDark) {
-                btn.setAttribute('data-lucide', 'sun'); 
-            } else {
-                btn.setAttribute('data-lucide', 'moon'); 
+            if (btn) {
+                if (isDark) {
+                    btn.setAttribute('data-lucide', 'sun'); 
+                } else {
+                    btn.setAttribute('data-lucide', 'moon'); 
+                }
             }
             lucide.createIcons();
 
@@ -322,6 +319,15 @@
                 // Si es oscuro pone sallynoche.png, si no sally.png
                 img.src = isDark ? 'sallynoche.png' : 'sally.png';
             }
+
+            // 3. Actualizar FAVICON e Iconos de iOS
+            const favicon = document.getElementById('favicon');
+            const appleIcon = document.getElementById('appleIcon');
+            // Selección del icono según el tema
+            const iconPath = isDark ? 'iconosallynoche.png' : 'iconosallydia.png';
+
+            if (favicon) favicon.href = iconPath;
+            if (appleIcon) appleIcon.href = iconPath;
         }
 
         // --- GESTIÓN DE CONFIGURACIÓN ---
