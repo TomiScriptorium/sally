@@ -70,9 +70,9 @@
         <!-- Contenedor Estrellas (Visible solo en modo oscuro) -->
         <div id="stars-container" class="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-1000"></div>
         
-        <!-- SUELO/PASTO: Ocupa el tercio inferior (h-1/3) -->
+        <!-- SUELO/PASTO: Altura ajustada a 40% en móvil (h-[40%]) para que alcance a Sally, 1/3 en escritorio -->
         <!-- Día: bg-emerald-200 (verde suave) | Noche: bg-emerald-950 (verde bosque oscuro) -->
-        <div class="absolute bottom-0 left-0 w-full h-1/3 bg-emerald-200 dark:bg-emerald-950 transition-colors duration-1000 overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-full h-[40%] md:h-1/3 bg-emerald-200 dark:bg-emerald-950 transition-colors duration-1000 overflow-hidden">
             
             <!-- TEXTURA PASTO DÍA (Pequeñas briznas verdes oscuras) -->
             <!-- Se eliminó una de las curvas del path SVG para reducir la densidad un 33% -->
@@ -137,15 +137,23 @@
         </button>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL (Agregado relative y z-10 para asegurar que esté sobre el fondo) -->
-    <main class="relative z-10 container mx-auto px-4 h-full w-full overflow-y-auto md:h-auto md:min-h-screen md:overflow-visible flex flex-col md:flex-row items-center justify-start pt-28 pb-32 md:justify-center md:pt-0 md:pb-0 gap-6 md:gap-16 max-w-5xl scroll-smooth">
+    <!-- CONTENIDO PRINCIPAL -->
+    <!-- CAMBIOS MÓVIL: Eliminado pt-28, agregado flex-1 spacer abajo para centrar por gravedad -->
+    <main class="relative z-10 container mx-auto px-4 h-full w-full overflow-y-auto md:h-auto md:min-h-screen md:overflow-visible flex flex-col md:flex-row items-center justify-start pb-10 md:justify-center md:pt-0 md:pb-0 gap-6 md:gap-16 max-w-5xl scroll-smooth">
         
+        <!-- SPACER PARA MÓVIL: Empuja el contenido hacia abajo (gravedad visual) -->
+        <div class="w-full flex-1 min-h-[2rem] md:hidden"></div>
+
         <!-- LADO IZQUIERDO: AVATAR -->
         <div class="w-full md:w-5/12 flex justify-center md:justify-end animate-fade-in-up flex-shrink-0">
             <div class="relative group">
                 <div class="relative">
-                    <img id="sallyAvatar" src="sally.png" alt="Avatar de Sally" class="w-auto h-52 md:h-auto max-w-full md:max-h-[500px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300">
-                    <div id="loader" class="hidden absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm flex items-center justify-center rounded-3xl">
+                    <!-- Sombra de contacto debajo de Sally para que no flote -->
+                    <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-28 h-3 bg-black/20 dark:bg-black/40 rounded-[100%] blur-sm z-0"></div>
+                    
+                    <img id="sallyAvatar" src="sally.png" alt="Avatar de Sally" class="relative z-10 w-auto h-52 md:h-auto max-w-full md:max-h-[500px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300">
+                    
+                    <div id="loader" class="hidden absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm flex items-center justify-center rounded-3xl z-20">
                         <div class="w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 </div>
