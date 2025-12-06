@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sally.</title>
     <!-- Tailwind CSS para el diseño -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -44,17 +44,18 @@
         .hidden { display: none !important; }
     </style>
 </head>
-<body class="min-h-screen bg-[#f8f9fa] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 selection:bg-sky-100 selection:text-sky-900 dark:selection:bg-sky-900 dark:selection:text-sky-100 relative overflow-hidden transition-colors duration-300">
+<!-- CAMBIO: min-h-dvh para móviles, overflow-y-auto en móvil para permitir corrección manual, md:overflow-hidden para escritorio -->
+<body class="min-h-dvh bg-[#f8f9fa] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 selection:bg-sky-100 selection:text-sky-900 dark:selection:bg-sky-900 dark:selection:text-sky-100 relative overflow-y-auto md:overflow-hidden transition-colors duration-300">
 
     <!-- NOTIFICACIONES FLOTANTES -->
-    <div id="levelUpNotification" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+    <div id="levelUpNotification" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
         <div class="bg-gradient-to-r from-yellow-300 to-yellow-500 text-white px-8 py-4 rounded-3xl shadow-xl border-4 border-white dark:border-slate-700 text-2xl font-bold flex items-center gap-3 animate-bounce-custom">
             <i data-lucide="trophy" class="w-8 h-8"></i>
             <span id="levelUpText">¡Nivel 2!</span>
         </div>
     </div>
 
-    <div id="achievementNotification" class="hidden fixed bottom-8 right-8 z-50 animate-slide-up">
+    <div id="achievementNotification" class="hidden fixed bottom-8 right-8 z-50 animate-slide-up pointer-events-none">
         <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-2xl border-l-4 border-yellow-400 flex items-center gap-4 max-w-sm">
             <div class="bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded-full" id="achNotifIcon"></div>
             <div>
@@ -65,7 +66,7 @@
     </div>
 
     <!-- UI: HEADER / NIVEL -->
-    <div class="absolute top-6 left-6 md:top-10 md:left-10 z-20">
+    <div class="absolute top-4 left-4 md:top-10 md:left-10 z-20">
         <div class="flex items-center gap-3 bg-white dark:bg-slate-800 pl-2 pr-6 py-2 rounded-full shadow-sm cursor-pointer hover:shadow-md transition-all border border-slate-100 dark:border-slate-700" onclick="openAchievements()">
             <div class="relative">
                 <div id="levelDisplay" class="w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-900 flex items-center justify-center border-2 border-sky-200 dark:border-sky-700 text-sky-600 dark:text-sky-300 font-bold">1</div>
@@ -82,7 +83,7 @@
     </div>
 
     <!-- UI: BOTONES SUPERIOR DERECHA -->
-    <div class="absolute top-6 right-6 flex gap-3 z-20">
+    <div class="absolute top-4 right-4 md:top-6 md:right-6 flex gap-2 md:gap-3 z-20">
         <!-- Botón Tema -->
         <button onclick="toggleTheme()" class="p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-slate-400 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-400 hover:shadow-md transition-all border border-transparent dark:border-slate-700">
             <i id="themeIcon" data-lucide="moon" width="20"></i>
@@ -98,36 +99,35 @@
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="container mx-auto px-4 min-h-screen flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 max-w-5xl">
+    <!-- CAMBIO: justify-start y pt-28 en móvil para anclar contenido arriba y evitar saltos. md:justify-center y md:pt-0 restaura escritorio -->
+    <main class="container mx-auto px-4 min-h-dvh flex flex-col md:flex-row items-center justify-start pt-28 pb-10 md:justify-center md:pt-0 md:pb-0 gap-6 md:gap-16 max-w-5xl">
         
         <!-- LADO IZQUIERDO: AVATAR -->
-        <div class="w-full md:w-5/12 flex justify-center md:justify-end animate-fade-in-up">
+        <div class="w-full md:w-5/12 flex justify-center md:justify-end animate-fade-in-up flex-shrink-0">
             <div class="relative group">
-                <!-- Se eliminaron los fondos decorativos y el contenedor tipo tarjeta -->
-                
-                <!-- CONTENEDOR IMAGEN: Limpio, sin bordes ni fondo -->
+                <!-- CONTENEDOR IMAGEN -->
                 <div class="relative">
                     
-                    <!-- IMAGEN SALLY: Le agregué ID para cambiarla con JS -->
-                    <img id="sallyAvatar" src="sally.png" alt="Avatar de Sally" class="w-auto h-auto max-w-full max-h-[500px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300">
+                    <!-- IMAGEN SALLY: Más pequeña en móvil (h-60) para dejar espacio al teclado, normal en escritorio (md:h-96) -->
+                    <img id="sallyAvatar" src="sally.png" alt="Avatar de Sally" class="w-auto h-52 md:h-auto max-w-full md:max-h-[500px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300">
 
                     <!-- Loader -->
                     <div id="loader" class="hidden absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm flex items-center justify-center rounded-3xl">
                         <div class="w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 </div>
-                
             </div>
         </div>
 
         <!-- LADO DERECHO: INTERACCIÓN -->
-        <div class="w-full md:w-7/12 flex flex-col items-center md:items-start space-y-8 animate-fade-in-up delay-100">
+        <div class="w-full md:w-7/12 flex flex-col items-center md:items-start space-y-6 md:space-y-8 animate-fade-in-up delay-100">
             
             <div class="text-center md:text-left w-full cursor-pointer hover:opacity-80 transition-opacity" onclick="resetApp()" title="Volver al inicio">
-                <h1 class="text-6xl md:text-8xl font-bold text-slate-800 dark:text-slate-100 tracking-tight font-display">
+                <!-- Título un poco más pequeño en móvil -->
+                <h1 class="text-5xl md:text-8xl font-bold text-slate-800 dark:text-slate-100 tracking-tight font-display">
                     Sally<span class="text-sky-500">.</span>
                 </h1>
-                <p class="text-slate-400 dark:text-slate-500 mt-2 text-lg font-light ml-2">
+                <p class="text-slate-400 dark:text-slate-500 mt-2 text-base md:text-lg font-light ml-2">
                     Sin juicios. Sin historial. Solo respuestas.
                 </p>
             </div>
@@ -137,13 +137,13 @@
                     <input
                         type="text"
                         id="queryInput"
-                        placeholder="¿Cómo se escribe 'bizarro'?, ¿Qué es el gotelé?..."
-                        class="w-full py-5 pl-8 pr-16 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-full shadow-sm text-lg text-slate-700 dark:text-slate-200 placeholder:text-slate-300 dark:placeholder:text-slate-500 focus:outline-none focus:border-sky-300 dark:focus:border-sky-500 focus:ring-4 focus:ring-sky-100 dark:focus:ring-sky-900 transition-all"
+                        placeholder="Pregunta lo que sea..."
+                        class="w-full py-4 md:py-5 pl-6 md:pl-8 pr-16 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-full shadow-sm text-base md:text-lg text-slate-700 dark:text-slate-200 placeholder:text-slate-300 dark:placeholder:text-slate-500 focus:outline-none focus:border-sky-300 dark:focus:border-sky-500 focus:ring-4 focus:ring-sky-100 dark:focus:ring-sky-900 transition-all"
                     />
                     <button 
                         type="submit"
                         id="searchBtn"
-                        class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-slate-900 dark:bg-sky-600 hover:bg-sky-500 dark:hover:bg-sky-500 text-white p-3 rounded-full transition-colors duration-300 disabled:bg-slate-300 disabled:cursor-not-allowed"
+                        class="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 bg-slate-900 dark:bg-sky-600 hover:bg-sky-500 dark:hover:bg-sky-500 text-white p-2 md:p-3 rounded-full transition-colors duration-300 disabled:bg-slate-300 disabled:cursor-not-allowed"
                     >
                         <i data-lucide="search" width="20"></i>
                     </button>
@@ -152,11 +152,11 @@
                 <div id="suggestions" class="mt-4 flex flex-wrap gap-2 justify-center md:justify-start">
                     <button onclick="useSuggestion(this)" class="text-xs text-slate-400 dark:text-slate-500 hover:text-sky-500 dark:hover:text-sky-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-700 transition-colors">¿Cómo se dice 'umbrella'?</button>
                     <button onclick="useSuggestion(this)" class="text-xs text-slate-400 dark:text-slate-500 hover:text-sky-500 dark:hover:text-sky-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-700 transition-colors">Sinónimo de feliz</button>
-                    <button onclick="useSuggestion(this)" class="text-xs text-slate-400 dark:text-slate-500 hover:text-sky-500 dark:hover:text-sky-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-700 transition-colors">¿Los pingüinos tienen rodillas?</button>
+                    <button onclick="useSuggestion(this)" class="hidden md:inline-block text-xs text-slate-400 dark:text-slate-500 hover:text-sky-500 dark:hover:text-sky-400 bg-white dark:bg-slate-800 px-3 py-1 rounded-full border border-slate-100 dark:border-slate-700 transition-colors">¿Los pingüinos tienen rodillas?</button>
                 </div>
             </div>
 
-            <div id="responseCard" class="hidden w-full max-w-lg bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-xl animate-scale-up origin-top relative">
+            <div id="responseCard" class="hidden w-full max-w-lg bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-xl animate-scale-up origin-top relative mb-10 md:mb-0">
                 <button onclick="resetApp()" class="absolute top-4 right-4 text-slate-300 hover:text-slate-500 transition-colors" title="Cerrar respuesta">
                     <i data-lucide="x" width="18"></i>
                 </button>
