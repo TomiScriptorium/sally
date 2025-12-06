@@ -42,12 +42,20 @@
         .delay-75 { animation-delay: 75ms; }
         .delay-100 { animation-delay: 100ms; }
         .hidden { display: none !important; }
+        
+        /* Fix específico para Safari Mobile input zoom */
+        input, textarea, button, select, a { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
-<!-- CAMBIO: min-h-dvh para móviles, overflow-y-auto en móvil para permitir corrección manual, md:overflow-hidden para escritorio -->
-<body class="min-h-dvh bg-[#f8f9fa] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 selection:bg-sky-100 selection:text-sky-900 dark:selection:bg-sky-900 dark:selection:text-sky-100 relative overflow-y-auto md:overflow-hidden transition-colors duration-300">
+<!-- 
+    CAMBIO CLAVE PARA IOS: 
+    1. h-[100dvh]: Fuerza la altura exacta del viewport dinámico.
+    2. overflow-hidden: Evita que el body entero haga scroll (evita el rebote de la página).
+    3. md:min-h-screen y md:h-auto: Restaura comportamiento normal en escritorio.
+-->
+<body class="h-[100dvh] w-full bg-[#f8f9fa] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 selection:bg-sky-100 selection:text-sky-900 dark:selection:bg-sky-900 dark:selection:text-sky-100 relative overflow-hidden md:h-auto md:min-h-screen transition-colors duration-300">
 
-    <!-- NOTIFICACIONES FLOTANTES -->
+    <!-- NOTIFICACIONES FLOTANTES (Fixed relative to body, so they stay put) -->
     <div id="levelUpNotification" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
         <div class="bg-gradient-to-r from-yellow-300 to-yellow-500 text-white px-8 py-4 rounded-3xl shadow-xl border-4 border-white dark:border-slate-700 text-2xl font-bold flex items-center gap-3 animate-bounce-custom">
             <i data-lucide="trophy" class="w-8 h-8"></i>
@@ -65,7 +73,7 @@
         </div>
     </div>
 
-    <!-- UI: HEADER / NIVEL -->
+    <!-- UI: HEADER / NIVEL (Absolute positioned, stays fixed on top while Main scrolls) -->
     <div class="absolute top-4 left-4 md:top-10 md:left-10 z-20">
         <div class="flex items-center gap-3 bg-white dark:bg-slate-800 pl-2 pr-6 py-2 rounded-full shadow-sm cursor-pointer hover:shadow-md transition-all border border-slate-100 dark:border-slate-700" onclick="openAchievements()">
             <div class="relative">
@@ -99,8 +107,13 @@
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <!-- CAMBIO: justify-start y pt-28 en móvil para anclar contenido arriba y evitar saltos. md:justify-center y md:pt-0 restaura escritorio -->
-    <main class="container mx-auto px-4 min-h-dvh flex flex-col md:flex-row items-center justify-start pt-28 pb-10 md:justify-center md:pt-0 md:pb-0 gap-6 md:gap-16 max-w-5xl">
+    <!-- 
+        CAMBIO CLAVE PARA IOS: 
+        1. h-full overflow-y-auto: El scroll sucede AQUÍ dentro, no en el body. Esto estabiliza el layout.
+        2. pb-32: Padding extra abajo para que el contenido no quede pegado al borde o tapado.
+        3. md:overflow-visible: En escritorio se comporta normal.
+    -->
+    <main class="container mx-auto px-4 h-full w-full overflow-y-auto md:h-auto md:min-h-screen md:overflow-visible flex flex-col md:flex-row items-center justify-start pt-28 pb-32 md:justify-center md:pt-0 md:pb-0 gap-6 md:gap-16 max-w-5xl scroll-smooth">
         
         <!-- LADO IZQUIERDO: AVATAR -->
         <div class="w-full md:w-5/12 flex justify-center md:justify-end animate-fade-in-up flex-shrink-0">
@@ -108,7 +121,7 @@
                 <!-- CONTENEDOR IMAGEN -->
                 <div class="relative">
                     
-                    <!-- IMAGEN SALLY: Más pequeña en móvil (h-60) para dejar espacio al teclado, normal en escritorio (md:h-96) -->
+                    <!-- IMAGEN SALLY -->
                     <img id="sallyAvatar" src="sally.png" alt="Avatar de Sally" class="w-auto h-52 md:h-auto max-w-full md:max-h-[500px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300">
 
                     <!-- Loader -->
@@ -123,7 +136,6 @@
         <div class="w-full md:w-7/12 flex flex-col items-center md:items-start space-y-6 md:space-y-8 animate-fade-in-up delay-100">
             
             <div class="text-center md:text-left w-full cursor-pointer hover:opacity-80 transition-opacity" onclick="resetApp()" title="Volver al inicio">
-                <!-- Título un poco más pequeño en móvil -->
                 <h1 class="text-5xl md:text-8xl font-bold text-slate-800 dark:text-slate-100 tracking-tight font-display">
                     Sally<span class="text-sky-500">.</span>
                 </h1>
