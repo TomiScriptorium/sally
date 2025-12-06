@@ -6,22 +6,18 @@
     <title>Sally.</title>
     
     <!-- CONFIGURACIÓN DE ICONOS DINÁMICOS -->
-    <!-- Favicon estándar para navegadores -->
     <link id="favicon" rel="icon" type="image/png" href="iconosallydia.png">
-    <!-- Icono para Apple (iOS) - Pantalla de inicio y marcadores -->
     <link id="appleIcon" rel="apple-touch-icon" href="iconosallydia.png">
     
-    <!-- Tailwind CSS para el diseño -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class', // Habilita modo oscuro manual
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        sky: {
-                            850: '#0c4a6e', // Tono personalizado para modo oscuro
-                        }
+                        sky: { 850: '#0c4a6e' }
                     }
                 }
             }
@@ -35,11 +31,22 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         
-        /* Animaciones */
+        /* Animaciones existentes */
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scale-up { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         @keyframes slide-up { from { opacity: 0; transform: translateY(100px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes bounce-custom { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -60%) scale(1.1); } }
+
+        /* NUEVAS ANIMACIONES DE FONDO */
+        @keyframes float-cloud { 
+            0% { transform: translateX(0px); } 
+            50% { transform: translateX(20px); } 
+            100% { transform: translateX(0px); } 
+        }
+        @keyframes twinkle { 
+            0%, 100% { opacity: 0.3; transform: scale(0.8); } 
+            50% { opacity: 1; transform: scale(1.2); } 
+        }
 
         .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
         .animate-scale-up { animation: scale-up 0.3s ease-out forwards; }
@@ -50,11 +57,19 @@
         .delay-100 { animation-delay: 100ms; }
         .hidden { display: none !important; }
         
-        /* Fix específico para Safari Mobile input zoom */
+        /* Fix Safari Mobile */
         input, textarea, button, select, a { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
 <body class="h-[100dvh] w-full bg-[#f8f9fa] dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 selection:bg-sky-100 selection:text-sky-900 dark:selection:bg-sky-900 dark:selection:text-sky-100 relative overflow-hidden md:h-auto md:min-h-screen transition-colors duration-300">
+
+    <!-- CAPA DE FONDO: NUBES Y ESTRELLAS (z-0 para estar detrás) -->
+    <div id="background-effects" class="fixed inset-0 pointer-events-none z-0 overflow-hidden w-full h-full">
+        <!-- Contenedor Nubes (Visible solo en modo claro) -->
+        <div id="clouds-container" class="absolute inset-0 opacity-100 dark:opacity-0 transition-opacity duration-1000"></div>
+        <!-- Contenedor Estrellas (Visible solo en modo oscuro) -->
+        <div id="stars-container" class="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-1000"></div>
+    </div>
 
     <!-- NOTIFICACIONES FLOTANTES -->
     <div id="levelUpNotification" class="hidden fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none">
@@ -74,7 +89,7 @@
         </div>
     </div>
 
-    <!-- UI: HEADER / NIVEL -->
+    <!-- UI: HEADER / NIVEL (z-20 para estar encima del fondo) -->
     <div class="absolute top-4 left-4 md:top-10 md:left-10 z-20">
         <div class="flex items-center gap-3 bg-white dark:bg-slate-800 pl-2 pr-6 py-2 rounded-full shadow-sm cursor-pointer hover:shadow-md transition-all border border-slate-100 dark:border-slate-700" onclick="openAchievements()">
             <div class="relative">
@@ -91,35 +106,27 @@
         </div>
     </div>
 
-    <!-- UI: BOTONES SUPERIOR DERECHA -->
+    <!-- UI: BOTONES SUPERIOR DERECHA (z-20) -->
     <div class="absolute top-4 right-4 md:top-6 md:right-6 flex gap-2 md:gap-3 z-20">
-        <!-- Botón Tema -->
         <button onclick="toggleTheme()" class="p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-slate-400 dark:text-slate-300 hover:text-sky-500 dark:hover:text-sky-400 hover:shadow-md transition-all border border-transparent dark:border-slate-700">
             <i id="themeIcon" data-lucide="moon" width="20"></i>
         </button>
-        <!-- Botón Configuración -->
         <button onclick="openSettings()" class="p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-white hover:shadow-md transition-all border border-transparent dark:border-slate-700">
             <i data-lucide="settings" width="20"></i>
         </button>
-        <!-- Botón Logros -->
         <button onclick="openAchievements()" class="p-3 bg-white dark:bg-slate-800 rounded-full shadow-sm text-slate-400 dark:text-slate-300 hover:text-yellow-500 hover:shadow-md transition-all border border-transparent dark:border-slate-700">
             <i data-lucide="trophy" width="20"></i>
         </button>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="container mx-auto px-4 h-full w-full overflow-y-auto md:h-auto md:min-h-screen md:overflow-visible flex flex-col md:flex-row items-center justify-start pt-28 pb-32 md:justify-center md:pt-0 md:pb-0 gap-6 md:gap-16 max-w-5xl scroll-smooth">
+    <!-- CONTENIDO PRINCIPAL (Agregado relative y z-10 para asegurar que esté sobre el fondo) -->
+    <main class="relative z-10 container mx-auto px-4 h-full w-full overflow-y-auto md:h-auto md:min-h-screen md:overflow-visible flex flex-col md:flex-row items-center justify-start pt-28 pb-32 md:justify-center md:pt-0 md:pb-0 gap-6 md:gap-16 max-w-5xl scroll-smooth">
         
         <!-- LADO IZQUIERDO: AVATAR -->
         <div class="w-full md:w-5/12 flex justify-center md:justify-end animate-fade-in-up flex-shrink-0">
             <div class="relative group">
-                <!-- CONTENEDOR IMAGEN -->
                 <div class="relative">
-                    
-                    <!-- IMAGEN SALLY -->
                     <img id="sallyAvatar" src="sally.png" alt="Avatar de Sally" class="w-auto h-52 md:h-auto max-w-full md:max-h-[500px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300">
-
-                    <!-- Loader -->
                     <div id="loader" class="hidden absolute inset-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm flex items-center justify-center rounded-3xl">
                         <div class="w-12 h-12 border-4 border-sky-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
@@ -189,6 +196,7 @@
         </div>
     </main>
 
+    <!-- MODALES (z-50) -->
     <!-- MODAL LOGROS -->
     <div id="achievementsModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="closeAchievements()">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-scale-up" onclick="event.stopPropagation()">
@@ -201,9 +209,7 @@
                 </button>
             </div>
             
-            <div id="achievementsList" class="p-6 max-h-[60vh] overflow-y-auto space-y-4">
-                <!-- Logros generados por JS -->
-            </div>
+            <div id="achievementsList" class="p-6 max-h-[60vh] overflow-y-auto space-y-4"></div>
             
             <div class="p-4 bg-slate-50 dark:bg-slate-900 text-center text-xs text-slate-400">
                 Sigue preguntando para desbloquear más sorpresas
@@ -262,6 +268,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             updateGamificationUI();
+            initBackgrounds(); // Inicializar fondos
             
             // Cargar tema
             if (localStorage.getItem('sally_theme') === 'dark' || (!('sally_theme' in localStorage) && window.matchMedia('(prefers_color_scheme: dark)').matches)) {
@@ -272,15 +279,64 @@
                 updateThemeIcon(false);
             }
 
-            // Verificar API Key
             if(userApiKey) {
                 document.getElementById('apiKeyInput').value = userApiKey;
                 document.getElementById('keyStatus').classList.remove('hidden');
-            } else {
-                // Abrir configuración si no hay key (opcional, mejor dejar que el usuario explore)
-                // openSettings(); 
             }
         });
+
+        // --- GENERACIÓN DE FONDOS (NUBES Y ESTRELLAS) ---
+        function initBackgrounds() {
+            // Generar Nubes (Día)
+            const cloudsContainer = document.getElementById('clouds-container');
+            const numClouds = 5; // Cantidad de nubes
+            
+            for(let i = 0; i < numClouds; i++) {
+                const cloud = document.createElement('div');
+                // SVG de nube simple
+                cloud.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full text-slate-200 opacity-60"><path d="M17.5,19c-3.037,0-5.5-2.463-5.5-5.5c0-0.106,0.005-0.211,0.014-0.316C10.996,12.756,9.831,12.5,9,12.5c-2.485,0-4.5,2.015-4.5,4.5c0,2.485,2.015,4.5,4.5,4.5h8.5c1.933,0,3.5-1.567,3.5-3.5S19.433,14.5,17.5,14.5c-0.18,0-0.355,0.014-0.526,0.04C16.923,11.385,14.436,9,11.5,9c-0.136,0-0.27,0.005-0.403,0.016C10.636,6.721,8.513,5,6,5C2.686,5,0,7.686,0,11s2.686,6,6,6c0.198,0,0.393-0.011,0.584-0.032C7.149,18.093,8.441,19,10,19h7.5z"/></svg>`;
+                
+                cloud.className = 'absolute';
+                // Posicionamiento aleatorio
+                cloud.style.top = `${Math.random() * 60}%`; // Solo en la mitad superior
+                cloud.style.left = `${Math.random() * 90}%`;
+                
+                // Tamaño variable
+                const size = 60 + Math.random() * 100;
+                cloud.style.width = `${size}px`;
+                cloud.style.height = `${size * 0.6}px`;
+                
+                // Animación de flotar (duración aleatoria)
+                cloud.style.animation = `float-cloud ${4 + Math.random() * 4}s ease-in-out infinite alternate`;
+                cloud.style.animationDelay = `${Math.random() * 2}s`;
+                
+                cloudsContainer.appendChild(cloud);
+            }
+
+            // Generar Estrellas (Noche)
+            const starsContainer = document.getElementById('stars-container');
+            const numStars = 50; // Cantidad de estrellas
+
+            for(let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'absolute bg-white rounded-full';
+                
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                
+                // Tamaño muy pequeño
+                const size = 1 + Math.random() * 2;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Animación de parpadeo
+                star.style.animation = `twinkle ${2 + Math.random() * 3}s ease-in-out infinite`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                star.style.opacity = Math.random(); // Opacidad inicial variable
+
+                starsContainer.appendChild(star);
+            }
+        }
 
         // --- GESTIÓN DE TEMAS ---
         function toggleTheme() {
@@ -296,41 +352,36 @@
             }
         }
 
-        // Función unificada para actualizar toda la UI dependiente del tema (Iconos e Imagen)
         function updateThemeIcon(isDark) {
-            updateThemeUI(isDark); // Mantenemos compatibilidad por si se llama desde otro lado, aunque renombre la lógica principal abajo
+            updateThemeUI(isDark);
         }
 
         function updateThemeUI(isDark) {
-            // 1. Actualizar icono del botón
+            // 1. Icono botón
             const btn = document.getElementById('themeIcon');
             if (btn) {
-                if (isDark) {
-                    btn.setAttribute('data-lucide', 'sun'); 
-                } else {
-                    btn.setAttribute('data-lucide', 'moon'); 
-                }
+                btn.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
             }
             lucide.createIcons();
 
-            // 2. Actualizar imagen de Sally
+            // 2. Imagen Sally
             const img = document.getElementById('sallyAvatar');
             if (img) {
-                // Si es oscuro pone sallynoche.png, si no sally.png
                 img.src = isDark ? 'sallynoche.png' : 'sally.png';
             }
 
-            // 3. Actualizar FAVICON e Iconos de iOS
+            // 3. Favicon
             const favicon = document.getElementById('favicon');
             const appleIcon = document.getElementById('appleIcon');
-            // Selección del icono según el tema
             const iconPath = isDark ? 'iconosallynoche.png' : 'iconosallydia.png';
 
             if (favicon) favicon.href = iconPath;
             if (appleIcon) appleIcon.href = iconPath;
+            
+            // Nota: Los fondos (nubes/estrellas) se manejan automáticamente vía CSS con la clase .dark
         }
 
-        // --- GESTIÓN DE CONFIGURACIÓN ---
+        // --- GESTIÓN DE CONFIGURACIÓN Y MODALES ---
         function openSettings() {
             document.getElementById('settingsModal').classList.remove('hidden');
         }
@@ -347,7 +398,6 @@
                 userApiKey = key;
                 document.getElementById('keyStatus').classList.remove('hidden');
                 
-                // Feedback visual en el botón
                 const btn = document.querySelector('#settingsModal button');
                 const originalText = btn.innerText;
                 btn.innerText = "¡Guardado!";
@@ -360,7 +410,6 @@
             }
         }
 
-        // --- NAVEGACIÓN Y UI ---
         function resetApp() {
             document.getElementById('responseCard').classList.add('hidden');
             document.getElementById('suggestions').classList.remove('hidden');
@@ -474,7 +523,6 @@
             const query = input.value.trim();
             if (!query) return;
 
-            // Si no hay API key configurada, avisar
             if (!userApiKey) {
                 openSettings();
                 alert("¡Hola! Necesitas configurar tu API Key de Gemini primero para que pueda responderte.");
@@ -487,7 +535,6 @@
             document.getElementById('suggestions').classList.add('hidden');
             document.getElementById('responseCard').classList.add('hidden');
 
-            // Prompt potente para resolver cualquier duda
             const systemPrompt = `Eres Sally, una asistente virtual inteligente y muy capaz (con personalidad de oveja amable). 
             
             Tus capacidades:
@@ -496,8 +543,7 @@
             3. Corrección: Si el usuario escribe mal, corrige sutilmente o confirma la ortografía.
             4. Creatividad: Puedes ayudar a recordar palabras ("eso que sirve para...").
 
-            Tono: Amigable, conciso (evita párrafos enormes a menos que sea necesario para la explicación), sin juicios.
-            Formato: Usa negritas para palabras clave si ayuda a la lectura.
+            Tono: Amigable, conciso, sin juicios.
             Idioma: Responde estrictamente en el mismo idioma que el usuario.`;
 
             try {
